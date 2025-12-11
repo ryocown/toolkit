@@ -1,6 +1,5 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { Map, Calculator, ArrowRight, Github, ExternalLink } from 'lucide-react';
+import { Map, Calculator, ArrowRight, Github } from 'lucide-react';
 
 const LandingPage = () => {
   const tools = [

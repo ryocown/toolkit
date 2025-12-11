@@ -29,9 +29,9 @@ export const calculateJapaneseTax = (grossIncome: number): TaxCalculationResult 
     }
 
     if (!applicableBracket) {
-      // Fallback for the lowest bracket if taxable income is > 0 but <= 1,950,000
-      const lowestBracket = JAPAN_TAX_BRACKETS[0];
-      totalTax = taxableIncome * lowestBracket.rate;
+        // Fallback for the lowest bracket if taxable income is > 0 but <= 1,950,000
+        const lowestBracket = JAPAN_TAX_BRACKETS[0];
+        totalTax = taxableIncome * lowestBracket.rate;
     }
 
     totalTax = Math.round(totalTax);
@@ -41,8 +41,7 @@ export const calculateJapaneseTax = (grossIncome: number): TaxCalculationResult 
     // Create a breakdown for visualization
     const breakdown: TaxBracketResult[] = [];
     let remainingIncome = taxableIncome;
-    let prevThreshold = 0;
-    
+
     for (const bracket of JAPAN_TAX_BRACKETS) {
         if (remainingIncome <= 0) break;
 
@@ -57,7 +56,6 @@ export const calculateJapaneseTax = (grossIncome: number): TaxCalculationResult 
             });
             remainingIncome -= incomeInBracket;
         }
-        prevThreshold = bracket.threshold;
     }
 
     return {
@@ -89,7 +87,7 @@ export const getMarginalRateForGrossIncome = (grossIncome: number): { rate: numb
             break;
         }
     }
-    
+
     // If income is very low but > 0, it falls in the first bracket
     if (!applicableBracket && taxableIncome > 0) {
         applicableBracket = JAPAN_TAX_BRACKETS[0];

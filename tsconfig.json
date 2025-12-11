@@ -33,8 +33,7 @@
   },
   "include": [
     "src",
-    "main.tsx",
-    "vite.config.ts"
+    "main.tsx"
   ],
   "references": [
     {

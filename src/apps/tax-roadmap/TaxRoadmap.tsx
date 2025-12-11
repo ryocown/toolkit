@@ -41,7 +41,7 @@ const getPositionPercentage = (date: Date) => {
   return Math.max(0, Math.min(100, (ms / TIMELINE_TOTAL_MS) * 100));
 };
 
-type StatusLevel = 'SAFE' | 'WARNING' | 'DANGER' | 'CRITICAL';
+
 
 interface TimelineState {
   currentDate: Date;
@@ -205,8 +205,8 @@ export default function TaxRoadmap() {
           <div className="text-sm text-slate-500 mb-4">Asset Transfer Strategy</div>
 
           <div className={`mb-4 p-3 rounded-lg border text-sm font-bold flex justify-between items-center ${state.inheritanceStatus === 'Limited Taxpayer'
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-              : 'bg-rose-50 text-rose-700 border-rose-100'
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+            : 'bg-rose-50 text-rose-700 border-rose-100'
             }`}>
             <span>{state.inheritanceStatus}</span>
             {state.inheritanceStatus === 'Limited Taxpayer' ? <Shield className="w-4 h-4" /> : <AlertTriangle className="w-4 h-4" />}
@@ -238,8 +238,8 @@ export default function TaxRoadmap() {
           <div className="text-sm text-slate-500 mb-4">Remittance Strategy</div>
 
           <div className={`mb-4 p-3 rounded-lg border text-sm font-bold flex justify-between items-center ${state.incomeTaxStatus.includes('NPR')
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-              : 'bg-orange-50 text-orange-700 border-orange-100'
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+            : 'bg-orange-50 text-orange-700 border-orange-100'
             }`}>
             <span>{state.incomeTaxStatus.split(' ')[0]} Status</span>
             {state.incomeTaxStatus.includes('NPR') ? <CheckCircle className="w-4 h-4" /> : <Info className="w-4 h-4" />}
@@ -277,8 +277,8 @@ export default function TaxRoadmap() {
           <div className="text-sm text-slate-500 mb-4">100M+ JPY Assets</div>
 
           <div className={`mb-4 p-3 rounded-lg border text-sm font-bold flex justify-between items-center ${state.exitTaxStatus === 'Exempt'
-              ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
-              : 'bg-rose-50 text-rose-700 border-rose-100'
+            ? 'bg-emerald-50 text-emerald-700 border-emerald-100'
+            : 'bg-rose-50 text-rose-700 border-rose-100'
             }`}>
             <span>{state.exitTaxStatus}</span>
             <span className="text-xs font-normal opacity-80">

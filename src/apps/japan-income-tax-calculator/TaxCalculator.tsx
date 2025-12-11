@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
-import { RsuDetails, TaxCalculationResult } from './types';
+import { TaxCalculationResult } from './types';
 import { calculateJapaneseTax } from './services/taxService';
 import { formatCurrency } from './utils/formatters';
 import RsuCalculator from './components/RsuCalculator';
@@ -41,7 +41,7 @@ const App: React.FC = () => {
                         {/* Salary Card */}
                         <div className="bg-slate-800/50 p-6 rounded-xl shadow-lg border border-slate-700">
                             <h2 className="text-2xl font-semibold mb-4 text-cyan-400">Annual Salary</h2>
-                             <SliderInput
+                            <SliderInput
                                 label="Base Salary (JPY)"
                                 value={baseSalary}
                                 min={1000000}
@@ -57,7 +57,7 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="lg:col-span-3">
-                       <ResultsDisplay 
+                        <ResultsDisplay
                             totalIncome={totalIncome}
                             baseSalary={baseSalary}
                             annualRsuValue={annualRsuValue}
@@ -68,7 +68,7 @@ const App: React.FC = () => {
 
                 <footer className="text-center mt-12 text-slate-500 text-sm">
                     <p>
-                        Disclaimer: This is a simplified estimation tool. It does not account for all deductions, credits, or residence tax. 
+                        Disclaimer: This is a simplified estimation tool. It does not account for all deductions, credits, or residence tax.
                         Consult a professional tax advisor for accurate financial planning.
                     </p>
                 </footer>
