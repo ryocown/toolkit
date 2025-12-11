@@ -67,7 +67,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = ({ totalIncome, baseSalary
                         <p className="text-lg font-semibold">Total Tax</p>
                         <p className="text-xs text-slate-400">Income Tax + Resident Tax</p>
                     </div>
-                    <p className="text-3xl font-bold text-red-400">- {formatCurrency(taxResult.totalTax, 'JPY')}</p>
+                    <p className="text-3xl font-bold text-red-400">{formatCurrency(taxResult.totalTax, 'JPY')}</p>
                 </div>
 
                 <div className="border-t border-slate-700 pt-3 space-y-2">
