@@ -17,3 +17,26 @@ export const SOCIAL_INSURANCE_DEDUCTION_RATE = 0.145; // Approximate rate
 
 // Exchange Rate
 export const yenToUsd = 0.0064; // Example rate, in a real app this would be dynamic
+
+// Detailed Social Insurance Rates (Employee Share)
+export const SOCIAL_INSURANCE_RATES = {
+    HEALTH: 0.0499, // ~5% (Health Insurance Association / Kyokai Kenpo avg)
+    PENSION: 0.0915, // 18.3% split 50/50
+    EMPLOYMENT: 0.006, // 0.6%
+};
+
+// Social Insurance Caps (Annual)
+export const SOCIAL_INSURANCE_CAPS = {
+    HEALTH: 16680000, // Standard Monthly Remuneration max ~1.39M * 12
+    PENSION: 7800000, // Standard Monthly Remuneration max ~650k * 12
+};
+
+// Resident Tax
+export const RESIDENT_TAX = {
+    RATE: 0.10,
+    BASIC_DEDUCTION: 430000,
+    PER_CAPITA: 5000,
+};
+
+// Special Reconstruction Income Tax
+export const RECONSTRUCTION_TAX_RATE = 0.021;

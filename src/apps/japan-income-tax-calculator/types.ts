@@ -10,12 +10,23 @@ export interface TaxBracketResult extends TaxBracket {
     taxInBracket: number;
 }
 
+export interface DeductionItem {
+    label: string;
+    amount: number;
+}
+
 export interface TaxCalculationResult {
+    incomeTax: number;
+    residentTax: number;
     totalTax: number;
+    socialInsurance: number;
+    employmentIncomeDeduction: number;
+    basicDeduction: number;
+    totalDeductions: number;
+    taxableIncome: number;
     netIncome: number;
     effectiveRate: number;
-    taxableIncome: number;
-    totalDeductions: number;
+    deductionsBreakdown: DeductionItem[];
     breakdown: TaxBracketResult[];
 }
 

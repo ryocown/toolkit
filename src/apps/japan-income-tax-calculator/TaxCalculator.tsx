@@ -6,11 +6,12 @@ import { formatCurrency } from './utils/formatters';
 import RsuCalculator from './components/RsuCalculator';
 import ResultsDisplay from './components/ResultsDisplay';
 import SliderInput from './components/SliderInput';
-import { yenToUsd } from './constants';
+
 
 const App: React.FC = () => {
     const [baseSalary, setBaseSalary] = useState<number>(7000000);
     const [annualRsuValue, setAnnualRsuValue] = useState<number>(0);
+    const [fxRate, setFxRate] = useState<number>(150);
     const [taxResult, setTaxResult] = useState<TaxCalculationResult | null>(null);
 
     const totalIncome = baseSalary + annualRsuValue;
@@ -38,6 +39,20 @@ const App: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                     <div className="lg:col-span-2 space-y-8">
+                        {/* FX Rate Card */}
+                        <div className="bg-slate-800/50 p-6 rounded-xl shadow-lg border border-slate-700">
+                            <h2 className="text-2xl font-semibold mb-4 text-cyan-400">Exchange Rate</h2>
+                            <SliderInput
+                                label="USD/JPY Rate"
+                                value={fxRate}
+                                min={100}
+                                max={200}
+                                step={0.1}
+                                onChange={setFxRate}
+                                formatDisplayValue={(val) => `1 USD = ${val.toFixed(1)} JPY`}
+                            />
+                        </div>
+
                         {/* Salary Card */}
                         <div className="bg-slate-800/50 p-6 rounded-xl shadow-lg border border-slate-700">
                             <h2 className="text-2xl font-semibold mb-4 text-cyan-400">Annual Salary</h2>
@@ -48,12 +63,12 @@ const App: React.FC = () => {
                                 max={50000000}
                                 step={100000}
                                 onChange={setBaseSalary}
-                                formatDisplayValue={(val) => `${formatCurrency(val, 'JPY')} / $${formatCurrency(val * yenToUsd, 'USD')}`}
+                                formatDisplayValue={(val) => `${formatCurrency(val, 'JPY')} / $${formatCurrency(val / fxRate, 'USD')}`}
                             />
                         </div>
 
                         {/* RSU Card */}
-                        <RsuCalculator onRsuValueChange={setAnnualRsuValue} />
+                        <RsuCalculator onRsuValueChange={setAnnualRsuValue} fxRate={fxRate} />
                     </div>
 
                     <div className="lg:col-span-3">
@@ -62,6 +77,7 @@ const App: React.FC = () => {
                             baseSalary={baseSalary}
                             annualRsuValue={annualRsuValue}
                             taxResult={taxResult}
+                            fxRate={fxRate}
                         />
                     </div>
                 </div>

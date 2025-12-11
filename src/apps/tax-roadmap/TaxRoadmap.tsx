@@ -324,9 +324,9 @@ export default function TaxRoadmap() {
               <div className="flex gap-4">
                 <div className="mt-1"><div className="w-2 h-2 rounded-full bg-rose-500"></div></div>
                 <div>
-                  <h4 className="font-bold text-rose-700">CRITICAL: Execute China Asset Transfer</h4>
+                  <h4 className="font-bold text-rose-700">CRITICAL: Execute Any Inheritance Transfer</h4>
                   <p className="text-sm text-slate-600 mt-1">
-                    You are waiting for PR Approval (est. {formatDate(prApprovalDate)}). You must complete the title transfer of the inheritance <strong>BEFORE</strong> approval.
+                    You are waiting for PR Approval (est. {formatDate(prApprovalDate)}). You must complete the transfer of the inheritance (title transfer of properties, etc.) <strong>BEFORE</strong> approval.
                   </p>
                 </div>
               </div>
@@ -351,7 +351,7 @@ export default function TaxRoadmap() {
                   <h4 className="font-bold text-emerald-800">LIQUIDATION WINDOW OPEN</h4>
                   <p className="text-sm text-slate-600 mt-1">
                     You have PR (Secure immigration) but remain an NPR Taxpayer until {formatDate(nprEndDate)}.
-                    <strong> Sell the China Property NOW.</strong> Do not remit proceeds.
+                    <strong> Sell any illiquid assets NOW.</strong> Do not remit proceeds.
                   </p>
                 </div>
               </div>

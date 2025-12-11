@@ -1,30 +1,20 @@
-
-import React, { useState, useCallback, useEffect, useRef } from 'react';
-import TextInput from './TextInput';
+import React, { useState, useCallback, useEffect } from 'react';
 import SliderInput from './SliderInput';
-import { fetchStockPrice, StockPriceResult } from '../services/stockService';
 import { formatCurrency } from '../utils/formatters';
-import { TickerIcon } from './Icon';
-import { yenToUsd } from '../constants';
 
 interface RsuCalculatorProps {
     onRsuValueChange: (value: number) => void;
+    fxRate: number;
 }
 
-const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
+const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange, fxRate }) => {
     const [isRsuEnabled, setIsRsuEnabled] = useState<boolean>(true);
-    const [ticker, setTicker] = useState<string>('GOOGL');
     const [totalShares, setTotalShares] = useState<number>(100);
     const [vestingYears, setVestingYears] = useState<number>(4);
     const [vestingSchedule, setVestingSchedule] = useState<number[]>([33, 33, 22, 12]);
-    
-    const [stockPrice, setStockPrice] = useState<number | null>(null);
-    const [sourceData, setSourceData] = useState<{url?: string, title?: string} | null>(null);
-    const [priceInput, setPriceInput] = useState<string>('');
-    const [isLoading, setIsLoading] = useState<boolean>(false);
-    const [error, setError] = useState<string | null>(null);
 
-    const lastFetchedTicker = useRef<string | null>(null);
+    const [stockPrice, setStockPrice] = useState<number | null>(150); // Default to 150
+    const [priceInput, setPriceInput] = useState<string>('150');
 
     const totalPercentage = vestingSchedule.reduce((sum, p) => sum + (p || 0), 0);
 
@@ -32,31 +22,17 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
     useEffect(() => {
         if (!isRsuEnabled) {
             onRsuValueChange(0);
-            setStockPrice(null);
-            setSourceData(null);
-            setError(null);
-            lastFetchedTicker.current = null;
         } else {
-            // Re-calculate if enabled and there's a valid price
             handlePriceInputBlur(true);
         }
     }, [isRsuEnabled, onRsuValueChange]);
-    
-    // Effect to update the text input when stock price is fetched
-    useEffect(() => {
-        if (stockPrice !== null) {
-            setPriceInput(stockPrice.toString());
-        } else {
-            setPriceInput('');
-        }
-    }, [stockPrice]);
 
     // Reactive calculation effect
     useEffect(() => {
         if (isRsuEnabled && stockPrice !== null && vestingSchedule.length > 0 && totalPercentage === 100) {
             const firstYearPercentage = vestingSchedule[0] || 0;
             const firstYearValueUSD = stockPrice * totalShares * (firstYearPercentage / 100);
-            const firstYearValueJPY = firstYearValueUSD * (1 / yenToUsd);
+            const firstYearValueJPY = firstYearValueUSD * fxRate;
             onRsuValueChange(Math.round(firstYearValueJPY));
         } else {
             onRsuValueChange(0);
@@ -82,7 +58,7 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
             applyEqualDistribution();
         }
     }, [vestingYears, vestingSchedule.length, applyEqualDistribution]);
-    
+
     const handleScheduleChange = (index: number, value: string) => {
         const newSchedule = [...vestingSchedule];
         const numericValue = parseInt(value, 10);
@@ -95,31 +71,8 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
         setVestingSchedule([33, 33, 22, 12]);
     };
 
-    const handleFetchPrice = async () => {
-        setError(null);
-        setIsLoading(true);
-        setStockPrice(null);
-        setSourceData(null);
-
-        try {
-            const result: StockPriceResult = await fetchStockPrice(ticker);
-            setStockPrice(result.price);
-            setSourceData({ url: result.sourceUrl, title: result.sourceTitle });
-            lastFetchedTicker.current = ticker;
-        } catch (err: any) {
-            setError(err.message || 'Failed to fetch stock price.');
-            lastFetchedTicker.current = null;
-        } finally {
-            setIsLoading(false);
-        }
-    };
-    
     const handlePriceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setPriceInput(e.target.value);
-        // If manually editing, clear the source data as it's no longer from the API
-        if (sourceData) {
-            setSourceData(null);
-        }
     };
 
     const handlePriceInputBlur = (forceUpdate = false) => {
@@ -129,15 +82,13 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
                 setStockPrice(newPrice);
             }
         } else {
-            // If input is invalid, clear it and the price state
-            setPriceInput('');
-            setStockPrice(null);
+            setPriceInput(stockPrice?.toString() || '');
         }
     };
 
     const firstYearPercentage = vestingSchedule.length > 0 ? vestingSchedule[0] || 0 : 0;
     const firstYearValueUsd = stockPrice ? stockPrice * totalShares * (firstYearPercentage / 100) : 0;
-    const firstYearValueJpy = firstYearValueUsd * (1 / yenToUsd);
+    const firstYearValueJpy = firstYearValueUsd * fxRate;
 
     return (
         <div className="bg-slate-800/50 p-6 rounded-xl shadow-lg border border-slate-700">
@@ -155,32 +106,8 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
                     </button>
                 </div>
             </div>
-            
-            <fieldset disabled={!isRsuEnabled} className="space-y-4 transition-opacity duration-300 disabled:opacity-50">
-                <div className="flex items-end gap-2">
-                    <div className="flex-grow">
-                        <TextInput 
-                            label="Stock Ticker"
-                            value={ticker}
-                            onChange={setTicker}
-                            placeholder="e.g., AAPL"
-                            icon={<TickerIcon />}
-                        />
-                    </div>
-                     <button
-                        onClick={handleFetchPrice}
-                        disabled={isLoading || !ticker.trim() || !isRsuEnabled}
-                        className="flex-shrink-0 bg-cyan-600 hover:bg-cyan-700 disabled:bg-slate-600 disabled:cursor-not-allowed text-white font-bold py-2 px-4 rounded-md transition-colors duration-200 h-[42px] w-[90px] flex items-center justify-center"
-                    >
-                        {isLoading ? (
-                            <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                            </svg>
-                        ) : 'Fetch'}
-                    </button>
-                </div>
 
+            <fieldset disabled={!isRsuEnabled} className="space-y-4 transition-opacity duration-300 disabled:opacity-50">
                 <div>
                     <label htmlFor="stock-price" className="block text-sm font-medium text-slate-300 mb-1">Stock Price (USD)</label>
                     <div className="relative">
@@ -193,7 +120,7 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
                             value={priceInput}
                             onChange={handlePriceInputChange}
                             onBlur={() => handlePriceInputBlur()}
-                            placeholder="Enter or fetch price"
+                            placeholder="Enter stock price"
                             disabled={!isRsuEnabled}
                             className="w-full bg-slate-700/50 border border-slate-600 rounded-md py-2 text-white placeholder-slate-400 focus:ring-2 focus:ring-cyan-500 focus:border-cyan-500 transition pl-7 pr-4"
                             step="0.01"
@@ -219,7 +146,7 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
                     onChange={setVestingYears}
                     formatDisplayValue={(val) => `${val} year${val > 1 ? 's' : ''}`}
                 />
-                
+
                 <div className="space-y-2 pt-2">
                     <label className="block text-sm font-medium text-slate-300">Vesting Schedule (%)</label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-5 gap-2">
@@ -235,7 +162,7 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
                             </div>
                         ))}
                     </div>
-                     <div className={`text-sm text-right pr-1 font-medium ${totalPercentage !== 100 ? 'text-red-400' : 'text-green-400/80'}`}>
+                    <div className={`text-sm text-right pr-1 font-medium ${totalPercentage !== 100 ? 'text-red-400' : 'text-green-400/80'}`}>
                         Total: {totalPercentage}%
                     </div>
                 </div>
@@ -250,28 +177,14 @@ const RsuCalculator: React.FC<RsuCalculatorProps> = ({ onRsuValueChange }) => {
                 </div>
             </fieldset>
 
-            {isRsuEnabled && error && <p className="mt-4 text-sm text-red-400 text-center">{error}</p>}
-
-            {isRsuEnabled && stockPrice !== null && !error && (
+            {isRsuEnabled && stockPrice !== null && (
                 <div className="mt-6 p-4 bg-slate-900/50 rounded-lg border border-slate-700">
-                     <p className="text-center text-sm text-slate-400">
-                        Based on a stock price of <span className="font-mono text-white">${formatCurrency(stockPrice, 'USD')}</span> for {ticker}
-                     </p>
-                     {sourceData?.url && (
-                         <div className="text-center mt-1">
-                             <a 
-                                href={sourceData.url} 
-                                target="_blank" 
-                                rel="noopener noreferrer" 
-                                className="text-xs text-cyan-500 hover:text-cyan-400 underline"
-                             >
-                                 Source: {sourceData.title || 'Google Search'}
-                             </a>
-                         </div>
-                     )}
-                    <div className="text-center mt-2">
+                    <div className="text-center">
                         <span className="text-lg text-cyan-300">Estimated Year 1 RSU Value:</span>
                         <p className="font-bold text-2xl text-cyan-300">{formatCurrency(firstYearValueJpy, 'JPY')}</p>
+                        <p className="text-xs text-slate-500 mt-1">
+                            ({totalShares.toLocaleString()} shares @ ${formatCurrency(stockPrice, 'USD')} x {firstYearPercentage}%)
+                        </p>
                     </div>
                 </div>
             )}
