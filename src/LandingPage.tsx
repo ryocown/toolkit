@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Map, Calculator, ArrowRight, Github } from 'lucide-react';
+import { Map, Calculator, ArrowRight, Github, TrendingUp } from 'lucide-react';
 
 const LandingPage = () => {
   const tools = [
@@ -20,6 +20,15 @@ const LandingPage = () => {
       color: "from-emerald-500/10 to-teal-500/10",
       borderColor: "border-emerald-100",
       hoverBorder: "hover:border-emerald-300"
+    },
+    {
+      title: "FIRE Sandbox",
+      description: "Visualize the impact of life events and market conditions on your path to financial independence. Runs entirely in browser.",
+      path: "/fire-calculator",
+      icon: <TrendingUp className="w-8 h-8 text-orange-500" />,
+      color: "from-orange-500/10 to-amber-500/10",
+      borderColor: "border-orange-100",
+      hoverBorder: "hover:border-orange-300"
     }
   ];
 
