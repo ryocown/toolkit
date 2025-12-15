@@ -37,3 +37,13 @@ export interface ModelConfig {
   icon: string;
   provider: 'google' | 'anthropic' | 'kimi' | 'llama';
 }
+
+export interface SimulationHistoryItem {
+  id: string;
+  timestamp: number;
+  topic: string;
+  panelData: Record<string, Opinion[]>;
+  verdictData: Verdict | null;
+  logs: string[];
+  currentStep: number;
+}

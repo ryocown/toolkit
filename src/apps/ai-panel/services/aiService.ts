@@ -16,12 +16,22 @@ export const extractJson = (text: string) => {
   }
 };
 
+export interface AIResponse {
+  text: string;
+  usage: {
+    promptTokens: number;
+    completionTokens: number;
+    totalTokens: number;
+  };
+  latencyMs: number;
+}
+
 export const callVertexAI = async (
   modelConfig: ModelConfig,
   prompt: string,
   projectId: string,
   gcloudAccessToken: string
-) => {
+): Promise<AIResponse> => {
   const endpoint = "aiplatform.googleapis.com";
   let url = "";
   let body = {};
@@ -56,6 +66,7 @@ export const callVertexAI = async (
     };
   }
 
+  const startTime = performance.now();
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -71,12 +82,40 @@ export const callVertexAI = async (
   }
 
   const data = await response.json();
+  const endTime = performance.now();
+  const latencyMs = Math.round(endTime - startTime);
+
+  let text = "";
+  let usage = { promptTokens: 0, completionTokens: 0, totalTokens: 0 };
 
   if (modelConfig.provider === 'google') {
-    return data.candidates[0].content.parts[0].text;
+    text = data.candidates[0].content.parts[0].text;
+    if (data.usageMetadata) {
+      usage = {
+        promptTokens: data.usageMetadata.promptTokenCount || 0,
+        completionTokens: data.usageMetadata.candidatesTokenCount || 0,
+        totalTokens: data.usageMetadata.totalTokenCount || 0,
+      };
+    }
   } else if (modelConfig.provider === 'anthropic') {
-    return data.content[0].text;
+    text = data.content[0].text;
+    if (data.usage) {
+      usage = {
+        promptTokens: data.usage.input_tokens || 0,
+        completionTokens: data.usage.output_tokens || 0,
+        totalTokens: (data.usage.input_tokens || 0) + (data.usage.output_tokens || 0),
+      };
+    }
   } else {
-    return data.choices[0].message.content;
+    text = data.choices[0].message.content;
+    if (data.usage) {
+      usage = {
+        promptTokens: data.usage.prompt_tokens || 0,
+        completionTokens: data.usage.completion_tokens || 0,
+        totalTokens: data.usage.total_tokens || 0,
+      };
+    }
   }
+
+  return { text, usage, latencyMs };
 };

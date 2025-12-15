@@ -5,6 +5,7 @@ import { SimulationSetup } from './components/SimulationSetup';
 import { ProcessLog } from './components/ProcessLog';
 import { RoleCard } from './components/RoleCard';
 import { VerdictCard } from './components/VerdictCard';
+import { HistoryDropdown } from './components/HistoryDropdown';
 import { useSynodSimulation } from './hooks/useSynodSimulation';
 
 export default function SynodAI() {
@@ -45,11 +46,15 @@ export default function SynodAI() {
     panelData,
     verdictData,
     logs,
-    handleSimulate
+    history,
+    handleSimulate,
+    loadFromHistory,
+    clearHistory
   } = useSynodSimulation({
     gcloudAccessToken,
     projectId,
     topic,
+    setTopic,
     enabledModels
   });
 
@@ -90,6 +95,11 @@ export default function SynodAI() {
               <div className="text-xs font-medium text-slate-400 hidden sm:block">
                 Powered by Google Model Garden (Gemini)
               </div>
+              <HistoryDropdown
+                history={history}
+                onSelect={loadFromHistory}
+                onClear={clearHistory}
+              />
             </div>
           </div>
         </header>
