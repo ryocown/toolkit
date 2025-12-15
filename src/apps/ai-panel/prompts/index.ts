@@ -20,6 +20,7 @@ export const getPanelFormationPrompt = (topic: string) => `
   For EACH role, provide:
   - "personaName": A realistic name.
   - "bio": A 1-sentence credential.
+  - "positionSummary": A 1-2 sentence summary of their core position on the topic.
   - "opinion": A sharp, professional opinion up to 500 words on the topic from their perspective.
 
   Not all roles will have an opinion on certain topic or matter. Do not force an opinion on that role. 
@@ -27,7 +28,7 @@ export const getPanelFormationPrompt = (topic: string) => `
 
   Return STRICT JSON format:
   {
-    "central_banker": { "personaName": "...", "bio": "...", "opinion": "..." },
+    "central_banker": { "personaName": "...", "bio": "...", "positionSummary": "...", "opinion": "..." },
     "business_leader": { ... },
     "labor_rep": { ... },
     "economist": { ... },

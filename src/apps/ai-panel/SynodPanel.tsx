@@ -8,17 +8,12 @@ import { VerdictCard } from './components/VerdictCard';
 import { useSynodSimulation } from './hooks/useSynodSimulation';
 
 export default function SynodAI() {
-  const [apiKey, setApiKey] = useState(() => localStorage.getItem('synod_gemini_api_key') || '');
   const [gcloudAccessToken, setGcloudAccessToken] = useState(() => localStorage.getItem('synod_gcloud_token') || '');
   const [projectId, setProjectId] = useState(() => localStorage.getItem('synod_project_id') || 'hirico-test-project-454404');
   const [topic, setTopic] = useState('');
   const [enabledModels, setEnabledModels] = useState<string[]>(MODELS_TO_USE.map(m => m.id));
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('synod_dark_mode') === 'true');
 
-  // Persist keys to localStorage
-  useEffect(() => {
-    localStorage.setItem('synod_gemini_api_key', apiKey);
-  }, [apiKey]);
 
   useEffect(() => {
     localStorage.setItem('synod_gcloud_token', gcloudAccessToken);
@@ -47,7 +42,6 @@ export default function SynodAI() {
     logs,
     handleSimulate
   } = useSynodSimulation({
-    apiKey,
     gcloudAccessToken,
     projectId,
     topic,
@@ -95,8 +89,6 @@ export default function SynodAI() {
             <SimulationSetup
               topic={topic}
               setTopic={setTopic}
-              apiKey={apiKey}
-              setApiKey={setApiKey}
               gcloudAccessToken={gcloudAccessToken}
               setGcloudAccessToken={setGcloudAccessToken}
               projectId={projectId}

@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
 import { Opinion, Verdict } from '../types';
 import { MODELS_TO_USE, ROLES } from '../constants';
 import { getPanelFormationPrompt, getAdjudicationPrompt } from '../prompts';
 import { extractJson, callVertexAI } from '../services/aiService';
 
 interface UseSynodSimulationProps {
-  apiKey: string;
   gcloudAccessToken: string;
   projectId: string;
   topic: string;
@@ -14,7 +12,6 @@ interface UseSynodSimulationProps {
 }
 
 export const useSynodSimulation = ({
-  apiKey,
   gcloudAccessToken,
   projectId,
   topic,
@@ -32,10 +29,7 @@ export const useSynodSimulation = ({
   const handleSimulate = async () => {
     const selectedModels = MODELS_TO_USE.filter(m => enabledModels.includes(m.id));
 
-    if (selectedModels.some(m => m.provider === 'google') && !apiKey) {
-      return setError("Please enter a Gemini API Key.");
-    }
-    if (selectedModels.some(m => m.provider !== 'google') && !gcloudAccessToken) {
+    if (!gcloudAccessToken) {
       return setError("Please enter a GCloud Access Token.");
     }
     if (!topic) return setError("Please enter a topic for the panel.");
@@ -49,7 +43,6 @@ export const useSynodSimulation = ({
     setVerdictData(null);
 
     try {
-      const genAI = new GoogleGenerativeAI(apiKey);
 
       // --- PHASE 1: PANEL FORMATION ---
       addLog("Initializing models: " + selectedModels.map(m => m.name).join(", "));
@@ -59,17 +52,7 @@ export const useSynodSimulation = ({
       const phase1Promises = selectedModels.map(async (modelConfig) => {
         addLog(`Requesting opinions from ${modelConfig.name}...`);
         try {
-          let text = "";
-          if (modelConfig.provider === 'google') {
-            const model = genAI.getGenerativeModel({
-              model: modelConfig.id,
-              generationConfig: { responseMimeType: "application/json" }
-            });
-            const result = await model.generateContent(rolePrompt);
-            text = result.response.text();
-          } else {
-            text = await callVertexAI(modelConfig, rolePrompt, projectId, gcloudAccessToken);
-          }
+          const text = await callVertexAI(modelConfig, rolePrompt, projectId, gcloudAccessToken);
 
           console.log(`Raw response from ${modelConfig.name}:`, text);
           addLog(`Raw response from ${modelConfig.name} (snippet): ${text.substring(0, 100)}...`);
@@ -116,17 +99,7 @@ export const useSynodSimulation = ({
       const verdictModelConfig = selectedModels.find(m => m.id === 'gemini-3-pro-preview') || selectedModels[0];
       addLog(`Adjudicating with ${verdictModelConfig.name}...`);
 
-      let verdictText = "";
-      if (verdictModelConfig.provider === 'google') {
-        const verdictModel = genAI.getGenerativeModel({
-          model: verdictModelConfig.id,
-          generationConfig: { responseMimeType: "application/json" }
-        });
-        const verdictResult = await verdictModel.generateContent(adjudicationPrompt);
-        verdictText = verdictResult.response.text();
-      } else {
-        verdictText = await callVertexAI(verdictModelConfig, adjudicationPrompt, projectId, gcloudAccessToken);
-      }
+      const verdictText = await callVertexAI(verdictModelConfig, adjudicationPrompt, projectId, gcloudAccessToken);
 
       console.log(`Raw verdict response from ${verdictModelConfig.name}:`, verdictText);
       const verdictJson = extractJson(verdictText);

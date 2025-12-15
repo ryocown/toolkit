@@ -5,10 +5,12 @@ export interface Step {
   desc: string;
 }
 
+import { LucideIcon } from 'lucide-react';
+
 export interface Role {
   id: string;
   title: string;
-  icon: any;
+  icon: LucideIcon;
   color: string;
   bg: string;
 }
@@ -16,6 +18,7 @@ export interface Role {
 export interface Opinion {
   personaName: string;
   bio: string;
+  positionSummary: string;
   opinion: string;
   modelName: string;
   modelIcon: string;

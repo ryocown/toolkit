@@ -26,7 +26,18 @@ export const callVertexAI = async (
   let url = "";
   let body = {};
 
-  if (modelConfig.provider === 'anthropic') {
+  if (modelConfig.provider === 'google') {
+    const region = 'us-central1';
+    url = `https://${region}-${endpoint}/v1/projects/${projectId}/locations/${region}/publishers/google/models/${modelConfig.id}:generateContent`;
+    body = {
+      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      generationConfig: {
+        responseMimeType: "application/json",
+        maxOutputTokens: 8192,
+        temperature: 1
+      }
+    };
+  } else if (modelConfig.provider === 'anthropic') {
     url = `https://${endpoint}/v1/projects/${projectId}/locations/global/publishers/anthropic/models/${modelConfig.id}:streamRawPredict`;
     body = {
       anthropic_version: "vertex-2023-10-16",
@@ -37,8 +48,7 @@ export const callVertexAI = async (
   } else {
     // Kimi
     const region = 'us-east5';
-    const regionalEndpoint = `aiplatform.googleapis.com`;
-    url = `https://${regionalEndpoint}/v1beta1/projects/${projectId}/locations/${region}/endpoints/openapi/chat/completions`;
+    url = `https://${endpoint}/v1beta1/projects/${projectId}/locations/${region}/endpoints/openapi/chat/completions`;
     body = {
       model: modelConfig.id,
       messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
@@ -63,7 +73,9 @@ export const callVertexAI = async (
 
   const data = await response.json();
 
-  if (modelConfig.provider === 'anthropic') {
+  if (modelConfig.provider === 'google') {
+    return data.candidates[0].content.parts[0].text;
+  } else if (modelConfig.provider === 'anthropic') {
     return data.content[0].text;
   } else {
     return data.choices[0].message.content;

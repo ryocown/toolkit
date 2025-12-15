@@ -4,8 +4,6 @@ import { MODELS_TO_USE } from '../constants';
 interface SimulationSetupProps {
   topic: string;
   setTopic: (val: string) => void;
-  apiKey: string;
-  setApiKey: (val: string) => void;
   gcloudAccessToken: string;
   setGcloudAccessToken: (val: string) => void;
   projectId: string;
@@ -20,8 +18,6 @@ interface SimulationSetupProps {
 export const SimulationSetup = ({
   topic,
   setTopic,
-  apiKey,
-  setApiKey,
   gcloudAccessToken,
   setGcloudAccessToken,
   projectId,
@@ -52,18 +48,6 @@ export const SimulationSetup = ({
           />
         </div>
 
-        <div>
-          <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">
-            Gemini API Key
-          </label>
-          <input
-            type="password"
-            value={apiKey}
-            onChange={(e) => setApiKey(e.target.value)}
-            placeholder="Enter AI Studio Key"
-            className="w-full p-3 bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:outline-none text-sm font-mono text-slate-800 dark:text-slate-200"
-          />
-        </div>
 
         <div>
           <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">

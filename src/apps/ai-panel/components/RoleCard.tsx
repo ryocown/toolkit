@@ -34,7 +34,12 @@ export const RoleCard = ({ role, opinions }: RoleCardProps) => {
                 {op.modelName}
               </div>
               <p className="font-semibold text-sm text-slate-700 dark:text-slate-200 mb-1">{op.personaName}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 italic mb-3">{op.bio}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 italic mb-2">{op.bio}</p>
+              <div className="mb-3 p-2 bg-indigo-50/50 dark:bg-indigo-900/20 rounded border-l-2 border-indigo-400 dark:border-indigo-500">
+                <p className="text-xs font-medium text-indigo-700 dark:text-indigo-300 italic">
+                  "{op.positionSummary}"
+                </p>
+              </div>
               <p className="text-sm text-slate-800 dark:text-slate-300 leading-relaxed">{op.opinion}</p>
             </div>
           ))}

@@ -2,8 +2,13 @@ import {
   Briefcase,
   Landmark,
   HardHat,
-  TrendingUp,
-  AlertCircle
+  LineChart,
+  ShieldAlert,
+  Zap,
+  Globe,
+  Activity,
+  Binary,
+  Search
 } from 'lucide-react';
 import { ModelConfig, Role, Step } from '../types';
 
@@ -19,13 +24,13 @@ export const ROLES: Role[] = [
   { id: 'central_banker', title: 'Central Banker', icon: Landmark, color: 'text-blue-600', bg: 'bg-blue-50' },
   { id: 'business_leader', title: 'Business Leader', icon: Briefcase, color: 'text-emerald-600', bg: 'bg-emerald-50' },
   { id: 'labor_rep', title: 'Labor Representative', icon: HardHat, color: 'text-orange-600', bg: 'bg-orange-50' },
-  { id: 'economist', title: 'Academic Economist', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { id: 'risk_manager', title: 'Risk Manager', icon: AlertCircle, color: 'text-red-600', bg: 'bg-red-50' },
-  { id: 'growth_strategist', title: 'Growth Strategist', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
-  { id: 'macro_strategist', title: 'Macro Strategist', icon: TrendingUp, color: 'text-blue-600', bg: 'bg-blue-50' },
-  { id: 'bond_specialist', title: 'Bond Specialist', icon: TrendingUp, color: 'text-purple-600', bg: 'bg-purple-50' },
-  { id: 'quant_analyst', title: 'Quant Analyst', icon: TrendingUp, color: 'text-green-600', bg: 'bg-green-50' },
-  { id: 'forensic_accountant', title: 'Forensic Accountant', icon: TrendingUp, color: 'text-red-600', bg: 'bg-red-50' },
+  { id: 'economist', title: 'Academic Economist', icon: LineChart, color: 'text-purple-600', bg: 'bg-purple-50' },
+  { id: 'risk_manager', title: 'Risk Manager', icon: ShieldAlert, color: 'text-red-600', bg: 'bg-red-50' },
+  { id: 'growth_strategist', title: 'Growth Strategist', icon: Zap, color: 'text-green-600', bg: 'bg-green-50' },
+  { id: 'macro_strategist', title: 'Macro Strategist', icon: Globe, color: 'text-blue-600', bg: 'bg-blue-50' },
+  { id: 'bond_specialist', title: 'Bond Specialist', icon: Activity, color: 'text-purple-600', bg: 'bg-purple-50' },
+  { id: 'quant_analyst', title: 'Quant Analyst', icon: Binary, color: 'text-green-600', bg: 'bg-green-50' },
+  { id: 'forensic_accountant', title: 'Forensic Accountant', icon: Search, color: 'text-red-600', bg: 'bg-red-50' },
 ];
 
 export const INITIAL_STEPS: Step[] = [
