@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Map, Calculator, ArrowRight, Github, TrendingUp } from 'lucide-react';
+import { Map, Calculator, ArrowRight, Github, TrendingUp, Users } from 'lucide-react';
 
 const LandingPage = () => {
   const tools = [
@@ -29,6 +29,15 @@ const LandingPage = () => {
       color: "from-orange-500/10 to-amber-500/10",
       borderColor: "border-orange-100",
       hoverBorder: "hover:border-orange-300"
+    },
+    {
+      title: "Synod AI",
+      description: "Virtual policy panel where multiple AI models debate complex topics and deliver consensus verdicts. Powered by Gemini.",
+      path: "/synod-ai",
+      icon: <Users className="w-8 h-8 text-purple-500" />,
+      color: "from-purple-500/10 to-indigo-500/10",
+      borderColor: "border-purple-100",
+      hoverBorder: "hover:border-purple-300"
     }
   ];
 

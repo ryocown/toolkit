@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/ryocown/toolkit#readme",
   "dependencies": {
-    "@google/genai": "latest",
+    "@google/generative-ai": "latest",
     "lucide-react": "^0.559.0",
     "react": "^19.2.1",
     "react-dom": "^19.2.1",
