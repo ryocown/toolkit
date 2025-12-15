@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Users, MessageSquare, Sun, Moon } from 'lucide-react';
+import { Users, MessageSquare, Sun, Moon, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { MODELS_TO_USE, ROLES } from './constants';
 import { SimulationSetup } from './components/SimulationSetup';
 import { ProcessLog } from './components/ProcessLog';
@@ -13,6 +13,7 @@ export default function SynodAI() {
   const [topic, setTopic] = useState('');
   const [enabledModels, setEnabledModels] = useState<string[]>(MODELS_TO_USE.map(m => m.id));
   const [isDarkMode, setIsDarkMode] = useState(() => localStorage.getItem('synod_dark_mode') === 'true');
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(() => localStorage.getItem('synod_sidebar_collapsed') === 'true');
 
 
   useEffect(() => {
@@ -32,6 +33,10 @@ export default function SynodAI() {
       document.documentElement.classList.remove('dark');
     }
   }, [isDarkMode]);
+
+  useEffect(() => {
+    localStorage.setItem('synod_sidebar_collapsed', String(isSidebarCollapsed));
+  }, [isSidebarCollapsed]);
 
   const {
     isProcessing,
@@ -56,6 +61,13 @@ export default function SynodAI() {
         <header className="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10 transition-colors duration-300">
           <div className="w-full px-6 h-16 flex items-center justify-between">
             <div className="flex items-center gap-2">
+              <button
+                onClick={() => setIsSidebarCollapsed(prev => !prev)}
+                className="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors mr-2"
+                aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+              >
+                {isSidebarCollapsed ? <PanelLeftOpen size={20} /> : <PanelLeftClose size={20} />}
+              </button>
               <div className="bg-indigo-600 p-2 rounded-lg">
                 <Users className="text-white" size={20} />
               </div>
@@ -82,10 +94,14 @@ export default function SynodAI() {
           </div>
         </header>
 
-        <main className="w-full px-6 py-8 grid lg:grid-cols-7 gap-8">
-
+        <main className="w-full px-6 py-8 flex gap-8">
           {/* Left Sidebar: Controls & Status */}
-          <div className="lg:col-span-2 space-y-6">
+          <aside
+            className={`
+              shrink-0 space-y-6 transition-all duration-300 ease-in-out overflow-hidden
+              ${isSidebarCollapsed ? 'w-0 opacity-0 pointer-events-none -ml-8' : 'w-full lg:w-80 opacity-100'}
+            `}
+          >
             <SimulationSetup
               topic={topic}
               setTopic={setTopic}
@@ -104,10 +120,10 @@ export default function SynodAI() {
               currentStep={currentStep}
               logs={logs}
             />
-          </div>
+          </aside>
 
           {/* Right Content: Results */}
-          <div className="lg:col-span-5 space-y-6">
+          <div className="flex-1 space-y-6 min-w-0">
 
             {/* Welcome State */}
             {currentStep === 0 && !isProcessing && (
