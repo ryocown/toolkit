@@ -11,7 +11,8 @@ export const MODELS_TO_USE: ModelConfig[] = [
   { id: 'gemini-3-pro-preview', name: 'Gemini 3 Pro Preview', icon: '⚡', provider: 'google' },
   { id: 'claude-opus-4-5', name: 'Claude 4.5 Opus', icon: '🎭', provider: 'anthropic' },
   { id: 'moonshotai/kimi-k2-thinking-maas', name: 'Kimi K2 Thinking', icon: '🌙', provider: 'kimi' },
-  { id: 'meta/llama-4-maverick-17b-128e-instruct-maas', name: 'Llama 4 Maverick', icon: '🇫', provider: 'llama' },
+  // llama is kinda useless
+  // { id: 'meta/llama-4-maverick-17b-128e-instruct-maas', name: 'Llama 4 Maverick', icon: '🇫', provider: 'llama' },
 ];
 
 export const ROLES: Role[] = [

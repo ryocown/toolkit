@@ -35,9 +35,10 @@ export const callVertexAI = async (
       temperature: 1,
     };
   } else {
-    // Kimi or Llama (MaaS)
+    // Kimi
     const region = 'us-east5';
-    url = `https://${endpoint}/v1beta1/projects/${projectId}/locations/${region}/endpoints/openapi/chat/completions`;
+    const regionalEndpoint = `aiplatform.googleapis.com`;
+    url = `https://${regionalEndpoint}/v1beta1/projects/${projectId}/locations/${region}/endpoints/openapi/chat/completions`;
     body = {
       model: modelConfig.id,
       messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
