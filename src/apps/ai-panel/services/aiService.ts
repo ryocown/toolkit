@@ -27,13 +27,12 @@ export const callVertexAI = async (
   let body = {};
 
   if (modelConfig.provider === 'google') {
-    const region = 'us-central1';
-    url = `https://${region}-${endpoint}/v1/projects/${projectId}/locations/${region}/publishers/google/models/${modelConfig.id}:generateContent`;
+    url = `https://${endpoint}/v1/projects/${projectId}/locations/global/publishers/google/models/${modelConfig.id}:generateContent`;
     body = {
       contents: [{ role: "user", parts: [{ text: prompt }] }],
       generationConfig: {
         responseMimeType: "application/json",
-        maxOutputTokens: 8192,
+        maxOutputTokens: 64000,
         temperature: 1
       }
     };
