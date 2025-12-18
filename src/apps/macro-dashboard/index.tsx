@@ -5,7 +5,7 @@ import { AlphaVantageService } from './services/AlphaVantageService';
 
 export const API_CONFIG = {
   alphaVantage: 'https://www.alphavantage.co/query',
-  alphaVantageKey: 'IKRSNGLSBFQBWNNV' // User provided key
+  alphaVantageKey: 'IKRSNGLSBFQBWNNV' // yes i know, and no i dont care, its a free key bro
 };
 
 // --- TYPES ---
