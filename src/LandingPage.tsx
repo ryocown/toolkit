@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Map, Calculator, ArrowRight, Github, TrendingUp, Users } from 'lucide-react';
+import { Map, Calculator, ArrowRight, Github, TrendingUp, Users, Activity } from 'lucide-react';
 
 const LandingPage = () => {
   const tools = [
@@ -38,6 +38,15 @@ const LandingPage = () => {
       color: "from-purple-500/10 to-indigo-500/10",
       borderColor: "border-purple-100",
       hoverBorder: "hover:border-purple-300"
+    },
+    {
+      title: "Macro Dashboard",
+      description: "Real-time economic monitor tracking treasury yields, inflation, and market trends to identify current regime shifts.",
+      path: "/macro-dashboard",
+      icon: <Activity className="w-8 h-8 text-blue-500" />,
+      color: "from-blue-500/10 to-cyan-500/10",
+      borderColor: "border-blue-100",
+      hoverBorder: "hover:border-blue-300"
     }
   ];
 
