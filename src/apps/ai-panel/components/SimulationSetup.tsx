@@ -1,5 +1,6 @@
-import { Brain, Play, Loader2, AlertCircle } from 'lucide-react';
-import { MODELS_TO_USE } from '../constants';
+import { Brain, Play, Loader2, AlertCircle, Paperclip, X, Image as ImageIcon, FileText, ToggleLeft, ToggleRight } from 'lucide-react';
+import { MODELS_TO_USE, SUPPORTED_FILE_TYPES } from '../constants';
+import { Attachment, SimulationMode } from '../types';
 
 interface SimulationSetupProps {
   topic: string;
@@ -13,6 +14,10 @@ interface SimulationSetupProps {
   isProcessing: boolean;
   handleSimulate: () => void;
   error: string | null;
+  mode: SimulationMode;
+  setMode: (mode: SimulationMode) => void;
+  attachments: Attachment[];
+  setAttachments: (attachments: Attachment[]) => void;
 }
 
 export const SimulationSetup = ({
@@ -26,14 +31,77 @@ export const SimulationSetup = ({
   setEnabledModels,
   isProcessing,
   handleSimulate,
-  error
+  error,
+  mode,
+  setMode,
+  attachments,
+  setAttachments
 }: SimulationSetupProps) => {
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+
+    const newAttachments: Attachment[] = [];
+    for (let i = 0; i < files.length; i++) {
+      const file = files[i];
+      if (!SUPPORTED_FILE_TYPES.includes(file.type)) {
+        alert(`File type ${file.type} is not supported.`);
+        continue;
+      }
+
+      const reader = new FileReader();
+      const base64 = await new Promise<string>((resolve) => {
+        reader.onload = () => {
+          const result = reader.result as string;
+          resolve(result.split(',')[1]);
+        };
+        reader.readAsDataURL(file);
+      });
+
+      newAttachments.push({
+        name: file.name,
+        type: file.type,
+        size: file.size,
+        data: base64
+      });
+    }
+
+    setAttachments([...attachments, ...newAttachments]);
+  };
+
+  const removeAttachment = (index: number) => {
+    setAttachments(attachments.filter((_, i) => i !== index));
+  };
+
+  const selectedModels = MODELS_TO_USE.filter(m => enabledModels.includes(m.id));
+  const hasUnsupportedModelForAttachments = attachments.length > 0 && selectedModels.some(m => m.provider === 'kimi');
+
   return (
     <div className="bg-white dark:bg-slate-900 p-6 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 transition-colors duration-300">
-      <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-4 flex items-center gap-2">
-        <Brain size={18} className="text-indigo-500 dark:text-indigo-400" />
-        Simulation Setup
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+          <Brain size={18} className="text-indigo-500 dark:text-indigo-400" />
+          Simulation Setup
+        </h2>
+
+        <button
+          onClick={() => setMode(mode === 'macro' ? 'investment_committee' : 'macro')}
+          className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-indigo-300 dark:hover:border-indigo-500 transition-all group"
+        >
+          {mode === 'macro' ? (
+            <>
+              <ToggleLeft size={18} className="text-slate-400 group-hover:text-indigo-500" />
+              <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">Macro Mode</span>
+            </>
+          ) : (
+            <>
+              <ToggleRight size={18} className="text-indigo-500" />
+              <span className="text-xs font-semibold text-indigo-600 dark:text-indigo-400">Investment Committee</span>
+            </>
+          )}
+        </button>
+      </div>
 
       <div className="space-y-4">
         <div>
@@ -48,6 +116,35 @@ export const SimulationSetup = ({
           />
         </div>
 
+        <div>
+          <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-2">
+            Attachments
+          </label>
+          <div className="space-y-2">
+            <div className="flex flex-wrap gap-2">
+              {attachments.map((att, i) => (
+                <div key={i} className="flex items-center gap-2 px-2 py-1 bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-100 dark:border-indigo-800 rounded-md group">
+                  {att.type.startsWith('image/') ? <ImageIcon size={14} className="text-indigo-500" /> : <FileText size={14} className="text-indigo-500" />}
+                  <span className="text-xs text-indigo-700 dark:text-indigo-300 truncate max-w-[120px]">{att.name}</span>
+                  <button onClick={() => removeAttachment(i)} className="text-indigo-400 hover:text-red-500 transition-colors">
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+              <label className="flex items-center gap-2 px-3 py-1 bg-slate-50 dark:bg-slate-800 border border-dashed border-slate-300 dark:border-slate-600 rounded-md cursor-pointer hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                <Paperclip size={14} className="text-slate-400" />
+                <span className="text-xs text-slate-500 dark:text-slate-400">Add File</span>
+                <input type="file" multiple onChange={handleFileChange} className="hidden" accept={SUPPORTED_FILE_TYPES.join(',')} />
+              </label>
+            </div>
+            {hasUnsupportedModelForAttachments && (
+              <div className="flex items-center gap-2 text-[10px] text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-900/20 p-2 rounded border border-amber-100 dark:border-amber-900/30">
+                <AlertCircle size={12} />
+                Some selected models (Kimi) do not support attachments and will ignore them.
+              </div>
+            )}
+          </div>
+        </div>
 
         <div>
           <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase mb-1">

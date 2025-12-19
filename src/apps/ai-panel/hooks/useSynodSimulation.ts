@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Opinion, Verdict, SimulationHistoryItem } from '../types';
-import { MODELS_TO_USE, ROLES } from '../constants';
+import { Opinion, Verdict, SimulationHistoryItem, SimulationMode, Attachment } from '../types';
+import { MODELS_TO_USE, ROLES, INVESTMENT_COMMITTEE_ROLES } from '../constants';
 import { getPanelFormationPrompt, getAdjudicationPrompt } from '../prompts';
 import { extractJson, callVertexAI } from '../services/aiService';
 
@@ -25,6 +25,8 @@ export const useSynodSimulation = ({
   const [panelData, setPanelData] = useState<Record<string, Opinion[]>>({});
   const [verdictData, setVerdictData] = useState<Verdict | null>(null);
   const [logs, setLogs] = useState<string[]>([]);
+  const [mode, setMode] = useState<SimulationMode>('macro');
+  const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [history, setHistory] = useState<SimulationHistoryItem[]>(() => {
     const saved = localStorage.getItem('synod_history');
     return saved ? JSON.parse(saved) : [];
@@ -36,11 +38,21 @@ export const useSynodSimulation = ({
 
   const addLog = (msg: string) => setLogs(prev => [...prev, `[${new Date().toLocaleTimeString()}] ${msg}`]);
 
-  const saveToHistory = (finalTopic: string, finalPanelData: Record<string, Opinion[]>, finalVerdict: Verdict | null, finalLogs: string[], finalStep: number) => {
+  const saveToHistory = (
+    finalTopic: string,
+    finalMode: SimulationMode,
+    finalAttachments: Attachment[],
+    finalPanelData: Record<string, Opinion[]>,
+    finalVerdict: Verdict | null,
+    finalLogs: string[],
+    finalStep: number
+  ) => {
     const newItem: SimulationHistoryItem = {
       id: crypto.randomUUID(),
       timestamp: Date.now(),
       topic: finalTopic,
+      mode: finalMode,
+      attachments: finalAttachments,
       panelData: finalPanelData,
       verdictData: finalVerdict,
       logs: finalLogs,
@@ -51,6 +63,8 @@ export const useSynodSimulation = ({
 
   const loadFromHistory = (item: SimulationHistoryItem) => {
     setTopic(item.topic);
+    setMode(item.mode || 'macro');
+    setAttachments(item.attachments || []);
     setPanelData(item.panelData);
     setVerdictData(item.verdictData);
     setLogs(item.logs);
@@ -80,18 +94,20 @@ export const useSynodSimulation = ({
     setVerdictData(null);
 
     try {
-
       // --- PHASE 1: PANEL FORMATION ---
-      addLog("Initializing models: " + selectedModels.map(m => m.name).join(", "));
+      addLog(`Initializing ${mode} simulation with models: ` + selectedModels.map(m => m.name).join(", "));
+      if (attachments.length > 0) {
+        addLog(`Including ${attachments.length} attachments: ` + attachments.map(a => a.name).join(", "));
+      }
 
-      const rolePrompt = getPanelFormationPrompt(topic);
+      const rolePrompt = getPanelFormationPrompt(topic, mode);
 
       addLog(`Prompt size: ${rolePrompt.length} chars`);
 
       const phase1Promises = selectedModels.map(async (modelConfig) => {
         addLog(`Requesting opinions from ${modelConfig.name}...`);
         try {
-          const response = await callVertexAI(modelConfig, rolePrompt, projectId, gcloudAccessToken);
+          const response = await callVertexAI(modelConfig, rolePrompt, projectId, gcloudAccessToken, attachments);
 
           console.log(`Raw response from ${modelConfig.name}:`, response.text);
           addLog(`${modelConfig.name}: Done (${response.latencyMs}ms, ${response.usage.totalTokens} tokens)`);
@@ -112,8 +128,10 @@ export const useSynodSimulation = ({
       setCurrentStep(2);
       addLog("Aggregating responses by role...");
 
+      const currentRoles = mode === 'investment_committee' ? INVESTMENT_COMMITTEE_ROLES : ROLES;
       const aggregated: Record<string, Opinion[]> = {};
-      ROLES.forEach(role => {
+
+      currentRoles.forEach(role => {
         aggregated[role.id] = [];
         validResults.forEach(res => {
           if (res && res.data[role.id]) {
@@ -139,7 +157,7 @@ export const useSynodSimulation = ({
       const verdictModelConfig = selectedModels.find(m => m.id === 'gemini-3-pro-preview') || selectedModels[0];
       addLog(`Adjudicating with ${verdictModelConfig.name}...`);
 
-      const verdictResponse = await callVertexAI(verdictModelConfig, adjudicationPrompt, projectId, gcloudAccessToken);
+      const verdictResponse = await callVertexAI(verdictModelConfig, adjudicationPrompt, projectId, gcloudAccessToken, attachments);
 
       console.log(`Raw verdict response from ${verdictModelConfig.name}:`, verdictResponse.text);
       const verdictJson = extractJson(verdictResponse.text);
@@ -149,7 +167,7 @@ export const useSynodSimulation = ({
       setCurrentStep(4); // Complete
 
       // Save to history
-      saveToHistory(topic, aggregated, verdictJson, [...logs, `[${new Date().toLocaleTimeString()}] Verdict reached (${verdictResponse.latencyMs}ms, ${verdictResponse.usage.totalTokens} tokens).`], 4);
+      saveToHistory(topic, mode, attachments, aggregated, verdictJson, [...logs, `[${new Date().toLocaleTimeString()}] Verdict reached (${verdictResponse.latencyMs}ms, ${verdictResponse.usage.totalTokens} tokens).`], 4);
 
     } catch (err: any) {
       console.error(err);
@@ -168,6 +186,10 @@ export const useSynodSimulation = ({
     verdictData,
     logs,
     history,
+    mode,
+    setMode,
+    attachments,
+    setAttachments,
     handleSimulate,
     loadFromHistory,
     clearHistory,

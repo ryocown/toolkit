@@ -1,4 +1,4 @@
-import { ModelConfig } from '../types';
+import { Attachment, ModelConfig } from '../types';
 
 export const extractJson = (text: string) => {
   try {
@@ -30,7 +30,8 @@ export const callVertexAI = async (
   modelConfig: ModelConfig,
   prompt: string,
   projectId: string,
-  gcloudAccessToken: string
+  gcloudAccessToken: string,
+  attachments: Attachment[] = []
 ): Promise<AIResponse> => {
   const endpoint = "aiplatform.googleapis.com";
   let url = "";
@@ -38,8 +39,19 @@ export const callVertexAI = async (
 
   if (modelConfig.provider === 'google') {
     url = `https://${endpoint}/v1/projects/${projectId}/locations/global/publishers/google/models/${modelConfig.id}:generateContent`;
+
+    const parts: any[] = [{ text: prompt }];
+    attachments.forEach(att => {
+      parts.push({
+        inlineData: {
+          mimeType: att.type,
+          data: att.data
+        }
+      });
+    });
+
     body = {
-      contents: [{ role: "user", parts: [{ text: prompt }] }],
+      contents: [{ role: "user", parts }],
       generationConfig: {
         responseMimeType: "application/json",
         maxOutputTokens: 64000,
@@ -48,14 +60,42 @@ export const callVertexAI = async (
     };
   } else if (modelConfig.provider === 'anthropic') {
     url = `https://${endpoint}/v1/projects/${projectId}/locations/global/publishers/anthropic/models/${modelConfig.id}:streamRawPredict`;
+
+    const content: any[] = [{ type: "text", text: prompt }];
+    attachments.forEach(att => {
+      if (att.type.startsWith('image/')) {
+        content.push({
+          type: "image",
+          source: {
+            type: "base64",
+            media_type: att.type,
+            data: att.data
+          }
+        });
+      } else if (att.type === 'application/pdf') {
+        // Claude 3.5 Sonnet and Opus support PDF on Vertex
+        content.push({
+          type: "document",
+          source: {
+            type: "base64",
+            media_type: att.type,
+            data: att.data
+          }
+        });
+      }
+    });
+
     body = {
       anthropic_version: "vertex-2023-10-16",
-      messages: [{ role: "user", content: [{ type: "text", text: prompt }] }],
+      messages: [{ role: "user", content }],
       max_tokens: 64000,
       temperature: 1,
     };
   } else {
     // Kimi
+    if (attachments.length > 0) {
+      console.warn(`Model ${modelConfig.name} does not support attachments. They will be ignored.`);
+    }
     const region = 'us-east5';
     url = `https://${endpoint}/v1beta1/projects/${projectId}/locations/${region}/endpoints/openapi/chat/completions`;
     body = {

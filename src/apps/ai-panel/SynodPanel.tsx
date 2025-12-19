@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Users, MessageSquare, Sun, Moon, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
-import { MODELS_TO_USE, ROLES } from './constants';
+import { MODELS_TO_USE, ROLES, INVESTMENT_COMMITTEE_ROLES } from './constants';
 import { SimulationSetup } from './components/SimulationSetup';
 import { ProcessLog } from './components/ProcessLog';
 import { RoleCard } from './components/RoleCard';
@@ -47,6 +47,10 @@ export default function SynodAI() {
     verdictData,
     logs,
     history,
+    mode,
+    setMode,
+    attachments,
+    setAttachments,
     handleSimulate,
     loadFromHistory,
     clearHistory
@@ -124,6 +128,10 @@ export default function SynodAI() {
               isProcessing={isProcessing}
               handleSimulate={handleSimulate}
               error={error}
+              mode={mode}
+              setMode={setMode}
+              attachments={attachments}
+              setAttachments={setAttachments}
             />
 
             <ProcessLog
@@ -169,7 +177,7 @@ export default function SynodAI() {
                 </div>
 
                 <div className="space-y-4">
-                  {ROLES.map(role => {
+                  {(mode === 'investment_committee' ? INVESTMENT_COMMITTEE_ROLES : ROLES).map(role => {
                     const opinions = panelData[role.id];
                     if (!opinions || opinions.length === 0) return null;
                     return (

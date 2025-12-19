@@ -5,6 +5,15 @@ export interface Step {
   desc: string;
 }
 
+export interface Attachment {
+  name: string;
+  type: string;
+  size: number;
+  data: string; // base64
+}
+
+export type SimulationMode = 'macro' | 'investment_committee';
+
 import { LucideIcon } from 'lucide-react';
 
 export interface Role {
@@ -42,6 +51,8 @@ export interface SimulationHistoryItem {
   id: string;
   timestamp: number;
   topic: string;
+  mode: SimulationMode;
+  attachments: Attachment[];
   panelData: Record<string, Opinion[]>;
   verdictData: Verdict | null;
   logs: string[];
