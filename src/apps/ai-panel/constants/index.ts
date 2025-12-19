@@ -20,7 +20,8 @@ import {
 import { ModelConfig, Role, Step } from '../types';
 
 export const MODELS_TO_USE: ModelConfig[] = [
-  { id: 'gemini-3-pro-preview', name: 'Gemini 3 Pro Preview', icon: '⚡', provider: 'google' },
+  { id: 'gemini-3-pro-preview', name: 'Gemini 3 Pro Preview', icon: '♊︎', provider: 'google' },
+  { id: 'gemini-3-flash-preview', name: 'Gemini 3 Flash Preview', icon: '⚡', provider: 'google' },
   { id: 'claude-opus-4-5', name: 'Claude 4.5 Opus', icon: '🎭', provider: 'anthropic' },
   { id: 'moonshotai/kimi-k2-thinking-maas', name: 'Kimi K2 Thinking', icon: '🌙', provider: 'kimi' },
   // llama is kinda useless
