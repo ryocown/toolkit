@@ -1,0 +1,77 @@
+settings:
+  start_date: "2021-01-01"
+  end_date: "2025-12-19"
+  benchmarks: ["SPY", "QQQ", "VTI"]
+  risk_free_rate: 0.04
+  rebalance_frequency: "quarterly"  # daily, weekly, monthly, quarterly, yearly, once
+  max_nan_pct: 0.5  # Drop tickers with >50% NaN, forward-fill the rest
+
+portfolio:
+  universe:
+    - AAPL
+    - ABBV
+    - ABT
+    - ACN
+    - AMAT
+    - AMD
+    - AMZN
+    - AVGO
+    - AXP
+    - BAC
+    - BLK
+    - BRK.B
+    - BX
+    - C
+    - CAT
+    - CME
+    - COF
+    - COST
+    - CSCO
+    - CVX
+    - DHR
+    - DIS
+    - GE
+    - GOOGL
+    - GS
+    - HD
+    - IBM
+    - ICE
+    - INTC
+    - INTU
+    - JNJ
+    - JPM
+    - KO
+    - LIN
+    - LLY
+    - MA
+    - META
+    - MRK
+    - MS
+    - MSFT
+    - NFLX
+    - NVDA
+    - PEP
+    - PG
+    - PM
+    - QCOM
+    - SCHW
+    - SPGI
+    - TMO
+    - TSLA
+    - TXN
+    - UNH
+    - UNP
+    - V
+    - WFC
+    - WMT
+    - XOM
+  exclusions: [
+    # Haters
+    "ADBE", "COIN", "LULU", "PLTR", "HOOD",
+    # Excluding high div stock due to tax withholding 
+    "KO", "JNJ", "PEP", "ABBV", "CVX" 
+  ]
+  fixed_weights:
+    GLD: 0.10
+    SGOV: 0.05
+    TIP: 0.05

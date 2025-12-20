@@ -1,0 +1,266 @@
+{
+    "ABBV": {
+        "sector": "Healthcare",
+        "name": "AbbVie Inc."
+    },
+    "AMZN": {
+        "sector": "Consumer Cyclical",
+        "name": "Amazon.com, Inc."
+    },
+    "AXP": {
+        "sector": "Financial Services",
+        "name": "American Express Company"
+    },
+    "LIN": {
+        "sector": "Basic Materials",
+        "name": "Linde plc"
+    },
+    "PEP": {
+        "sector": "Consumer Defensive",
+        "name": "PepsiCo, Inc."
+    },
+    "SPY": {
+        "sector": "Large Blend",
+        "name": "SPDR S&P 500 ETF"
+    },
+    "C": {
+        "sector": "Financial Services",
+        "name": "Citigroup Inc."
+    },
+    "COIN": {
+        "sector": "Financial Services",
+        "name": "Coinbase Global, Inc."
+    },
+    "BRK.B": {
+        "sector": "Other",
+        "name": "BRK.B"
+    },
+    "COF": {
+        "sector": "Financial Services",
+        "name": "Capital One Financial Corporation"
+    },
+    "DIS": {
+        "sector": "Communication Services",
+        "name": "The Walt Disney Company"
+    },
+    "LOW": {
+        "sector": "Consumer Cyclical",
+        "name": "Lowe's Companies, Inc."
+    },
+    "IBM": {
+        "sector": "Technology",
+        "name": "International Business Machines Corporation"
+    },
+    "PG": {
+        "sector": "Consumer Defensive",
+        "name": "The Procter & Gamble Company"
+    },
+    "MS": {
+        "sector": "Financial Services",
+        "name": "Morgan Stanley"
+    },
+    "SGOV": {
+        "sector": "Ultrashort Bond",
+        "name": "iShares 0-3 Month Treasury Bond ETF"
+    },
+    "DHR": {
+        "sector": "Healthcare",
+        "name": "Danaher Corporation"
+    },
+    "SPGI": {
+        "sector": "Financial Services",
+        "name": "S&P Global Inc."
+    },
+    "QQQ": {
+        "sector": "Large Growth",
+        "name": "Invesco QQQ Trust"
+    },
+    "AAPL": {
+        "sector": "Technology",
+        "name": "Apple Inc."
+    },
+    "ABT": {
+        "sector": "Healthcare",
+        "name": "Abbott Laboratories"
+    },
+    "BLK": {
+        "sector": "Financial Services",
+        "name": "BlackRock, Inc."
+    },
+    "MSFT": {
+        "sector": "Technology",
+        "name": "Microsoft Corporation"
+    },
+    "PM": {
+        "sector": "Consumer Defensive",
+        "name": "Philip Morris International Inc."
+    },
+    "AVGO": {
+        "sector": "Technology",
+        "name": "Broadcom Inc."
+    },
+    "INTC": {
+        "sector": "Technology",
+        "name": "Intel Corporation"
+    },
+    "WFC": {
+        "sector": "Financial Services",
+        "name": "Wells Fargo & Company"
+    },
+    "ACN": {
+        "sector": "Technology",
+        "name": "Accenture plc"
+    },
+    "CME": {
+        "sector": "Financial Services",
+        "name": "CME Group Inc."
+    },
+    "JPM": {
+        "sector": "Financial Services",
+        "name": "JPMorgan Chase & Co."
+    },
+    "META": {
+        "sector": "Communication Services",
+        "name": "Meta Platforms, Inc."
+    },
+    "JNJ": {
+        "sector": "Healthcare",
+        "name": "Johnson & Johnson"
+    },
+    "GOOGL": {
+        "sector": "Communication Services",
+        "name": "Alphabet Inc."
+    },
+    "UNP": {
+        "sector": "Industrials",
+        "name": "Union Pacific Corporation"
+    },
+    "TIP": {
+        "sector": "Inflation-Protected Bond",
+        "name": "iShares TIPS Bond ETF"
+    },
+    "HD": {
+        "sector": "Consumer Cyclical",
+        "name": "The Home Depot, Inc."
+    },
+    "NVDA": {
+        "sector": "Technology",
+        "name": "NVIDIA Corporation"
+    },
+    "VTI": {
+        "sector": "Large Blend",
+        "name": "Vanguard Total Stock Market Index Fund ETF Shares"
+    },
+    "XOM": {
+        "sector": "Energy",
+        "name": "Exxon Mobil Corporation"
+    },
+    "KO": {
+        "sector": "Consumer Defensive",
+        "name": "The Coca-Cola Company"
+    },
+    "WMT": {
+        "sector": "Consumer Defensive",
+        "name": "Walmart Inc."
+    },
+    "COST": {
+        "sector": "Consumer Defensive",
+        "name": "Costco Wholesale Corporation"
+    },
+    "GE": {
+        "sector": "Industrials",
+        "name": "GE Aerospace"
+    },
+    "NFLX": {
+        "sector": "Communication Services",
+        "name": "Netflix, Inc."
+    },
+    "TSLA": {
+        "sector": "Consumer Cyclical",
+        "name": "Tesla, Inc."
+    },
+    "SCHW": {
+        "sector": "Financial Services",
+        "name": "The Charles Schwab Corporation"
+    },
+    "INTU": {
+        "sector": "Technology",
+        "name": "Intuit Inc."
+    },
+    "GLD": {
+        "sector": "Commodities Focused",
+        "name": "SPDR Gold Shares"
+    },
+    "UNH": {
+        "sector": "Healthcare",
+        "name": "UnitedHealth Group Incorporated"
+    },
+    "CAT": {
+        "sector": "Industrials",
+        "name": "Caterpillar Inc."
+    },
+    "HOOD": {
+        "sector": "Financial Services",
+        "name": "Robinhood Markets, Inc."
+    },
+    "MRK": {
+        "sector": "Healthcare",
+        "name": "Merck & Co., Inc."
+    },
+    "LLY": {
+        "sector": "Healthcare",
+        "name": "Eli Lilly and Company"
+    },
+    "BAC": {
+        "sector": "Financial Services",
+        "name": "Bank of America Corporation"
+    },
+    "TXN": {
+        "sector": "Technology",
+        "name": "Texas Instruments Incorporated"
+    },
+    "CSCO": {
+        "sector": "Technology",
+        "name": "Cisco Systems, Inc."
+    },
+    "TMO": {
+        "sector": "Healthcare",
+        "name": "Thermo Fisher Scientific Inc."
+    },
+    "BX": {
+        "sector": "Financial Services",
+        "name": "Blackstone Inc."
+    },
+    "ICE": {
+        "sector": "Financial Services",
+        "name": "Intercontinental Exchange, Inc."
+    },
+    "GS": {
+        "sector": "Financial Services",
+        "name": "The Goldman Sachs Group, Inc."
+    },
+    "CVX": {
+        "sector": "Energy",
+        "name": "Chevron Corporation"
+    },
+    "AMD": {
+        "sector": "Technology",
+        "name": "Advanced Micro Devices, Inc."
+    },
+    "QCOM": {
+        "sector": "Technology",
+        "name": "QUALCOMM Incorporated"
+    },
+    "MA": {
+        "sector": "Financial Services",
+        "name": "Mastercard Incorporated"
+    },
+    "V": {
+        "sector": "Financial Services",
+        "name": "Visa Inc."
+    },
+    "AMAT": {
+        "sector": "Technology",
+        "name": "Applied Materials, Inc."
+    }
+}
