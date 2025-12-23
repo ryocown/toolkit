@@ -3,7 +3,7 @@ settings:
   end_date: "2025-12-19"
   benchmarks: ["SPY", "QQQ", "VTI"]
   risk_free_rate: 0.04
-  rebalance_frequency: "once"  # daily, weekly, monthly, quarterly, yearly, once
+  rebalance_frequency: "quarterly"  # daily, weekly, monthly, quarterly, yearly, once
   max_nan_pct: 0.5  # Drop tickers with >50% NaN, forward-fill the rest
 
 portfolio:
@@ -15,7 +15,7 @@ portfolio:
     HardAsset: [XOM, LIN]
     Healthcare: [LLY, UNH]
   exclusions: [
-    # Haters, I would not have any exposure into these meme-like stocks
+    # Haters, client would not have any exposure into these meme-like stocks
     "ADBE", "COIN", "LULU", "PLTR", "HOOD",
     # Excluding high div stock due to tax withholding 
     "KO", "JNJ", "PEP", "ABBV", "CVX" 

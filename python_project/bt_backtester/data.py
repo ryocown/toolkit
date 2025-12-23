@@ -1,13 +1,13 @@
 import os
+import logging
+import yfinance as yf
+import json
 import pandas as pd
 from datetime import datetime
 from alpaca.data.historical import StockHistoricalDataClient
 from alpaca.data.requests import StockBarsRequest
 from alpaca.data.timeframe import TimeFrame
 from alpaca.data.enums import Adjustment
-import logging
-import yfinance as yf
-import json
 
 logger = logging.getLogger(__name__)
 
@@ -27,18 +27,36 @@ class DataEngine:
     # Public API
     # -------------------------------------------------------------------------
     
-    def get_historical_data(self, tickers, start_date, end_date):
-        """Fetches daily close prices for multiple tickers."""
+    def get_historical_data(self, tickers, start_date, end_date, fail_on_missing=False):
+        """Fetches daily close prices for multiple tickers.
+        
+        Args:
+            tickers: List of ticker symbols
+            start_date: Start date for data
+            end_date: End date for data
+            fail_on_missing: If True, returns list of failed tickers for caller to handle
+            
+        Returns:
+            If fail_on_missing=True: (DataFrame, list of failed tickers)
+            If fail_on_missing=False: DataFrame only (backward compatible)
+        """
         all_data = {}
+        failed_tickers = []
+        
         for ticker in tickers:
             data = self._get_ticker_data(ticker, start_date, end_date)
             if data is not None:
                 all_data[ticker] = data
             else:
                 logger.warning(f"No data retrieved for {ticker}")
+                failed_tickers.append(ticker)
         
         df = pd.DataFrame(all_data).sort_index()
-        return self._ensure_tz_naive(df)
+        df = self._ensure_tz_naive(df)
+        
+        if fail_on_missing:
+            return df, failed_tickers
+        return df
 
     def get_metadata(self, tickers):
         """Fetches sector metadata for tickers, utilizing local cache."""
@@ -74,7 +92,7 @@ class DataEngine:
             symbol_or_symbols=ticker,
             timeframe=TimeFrame.Day,
             start=start if isinstance(start, datetime) else start.to_pydatetime(),
-            end=end if isinstance(end, datetime) else end.to_pydatetime(),
+            end=(end if isinstance(end, datetime) else end.to_pydatetime()) + pd.Timedelta(days=1),
             adjustment=Adjustment.ALL
         )
         bars = self.client.get_stock_bars(request)
@@ -91,19 +109,32 @@ class DataEngine:
     def _get_ticker_data(self, ticker, start_date, end_date):
         """Gets ticker data, using cache when possible."""
         cache_path = self._cache_path(ticker)
-        req_start, req_end = pd.Timestamp(start_date), pd.Timestamp(end_date)
+        req_start, req_end = pd.Timestamp(start_date).normalize(), pd.Timestamp(end_date).normalize()
         
         # Try to load from cache
         cached_df = self._load_cache(cache_path)
         
         if cached_df is not None:
-            cache_start, cache_end = cached_df.index.min(), cached_df.index.max()
+            cache_start, cache_end = cached_df.index.min().normalize(), cached_df.index.max().normalize()
             
             # Full cache hit
             if cache_start <= req_start and cache_end >= req_end:
                 logger.debug(f"Cache hit for {ticker}")
                 return cached_df['close']
             
+            # Partial hit: check if the 'gaps' relative to data actually contain market days
+            has_gap = False
+            if req_start < cache_start:
+                if not self._get_market_days(req_start, cache_start - pd.Timedelta(days=1)).empty:
+                    has_gap = True
+            if req_end > cache_end:
+                if not self._get_market_days(cache_end + pd.Timedelta(days=1), req_end).empty:
+                    has_gap = True
+            
+            if not has_gap:
+                logger.debug(f"Cache effective hit for {ticker} (no market days in gaps)")
+                return cached_df['close']
+
             # Partial cache hit - fetch missing ranges
             logger.info(f"Cache partial hit for {ticker}: have {cache_start.date()}-{cache_end.date()}")
             cached_df = self._fill_cache_gaps(ticker, cached_df, cache_start, cache_end, req_start, req_end)
@@ -128,8 +159,13 @@ class DataEngine:
             fetch_ranges.append((cache_end + pd.Timedelta(days=1), req_end))
         
         for start, end in fetch_ranges:
-            if end <= start:
+            if end < start:
                 continue  # Skip invalid ranges
+            
+            # Only fetch if there are market days in the range
+            market_days = self._get_market_days(start, end)
+            if market_days.empty:
+                continue
             
             logger.info(f"Fetching {ticker} {start.date()} to {end.date()}...")
             try:
@@ -141,6 +177,13 @@ class DataEngine:
                 logger.warning(f"Error fetching {ticker} for {start.date()}-{end.date()}: {e}")
         
         return cached_df
+
+    def _get_market_days(self, start, end):
+        """Helper to get actual market days in a range using USFederalHolidayCalendar."""
+        from pandas.tseries.holiday import USFederalHolidayCalendar
+        biz_days = pd.bdate_range(start, end)
+        holidays = USFederalHolidayCalendar().holidays(start=start, end=end)
+        return biz_days[~biz_days.isin(holidays)]
 
     def _cache_path(self, ticker):
         return os.path.join(self.cache_dir, f"{ticker}.csv")
@@ -159,6 +202,7 @@ class DataEngine:
             return None
 
     def _save_cache(self, path, df):
+        """Saves data to CSV."""
         df.to_csv(path)
         logger.debug(f"Saved cache to {path}")
 
